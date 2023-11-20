@@ -1,58 +1,57 @@
 package org.example.dao;
 
 import org.example.model.Dormitory;
+import org.example.model.Room;
 import org.example.utils.HibernateUtil;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-import org.hibernate.cfg.Configuration;
 import org.hibernate.query.Query;
-import org.hibernate.resource.transaction.spi.TransactionStatus;
 
 import java.util.List;
 
-public class DormitoryDAO {
+public class RoomDAO {
     private SessionFactory sessionFactory;
 
-    public DormitoryDAO() {
+    public RoomDAO() {
         sessionFactory = HibernateUtil.getSessionFactory();
     }
 
-    public List<Dormitory> getAll(){
+    public List<Room> getAll(){
         try (Session session = sessionFactory.openSession()) {
-            Query<Dormitory> query = session.createQuery("from Dormitory", Dormitory.class);
+            Query<Room> query = session.createQuery("from Room", Room.class);
             return query.list();
         }
     }
 
-    public Dormitory getByName(String name){
+    public Room getByNumber(int number){
         try (Session session = sessionFactory.openSession()) {
-            Query<Dormitory> query = session.createQuery("from Dormitory where name= :name", Dormitory.class);
-            query.setParameter("name", name);
+            Query<Room> query = session.createQuery("from Room where number= :number", Room.class);
+            query.setParameter("number", number);
             return query.getResultList().get(0);
         }
     }
 
-    public Dormitory create(Dormitory dormitory){
+    public Room create(Room room){
         try (Session session = sessionFactory.openSession()) {
             Transaction tx = session.beginTransaction();
-            session.persist(dormitory);
+            session.persist(room);
             tx.commit();
-            return dormitory;
+            return room;
         }
     }
-    public Dormitory update(Dormitory dormitory){
+    public Room update(Room room){
         try (Session session = sessionFactory.openSession()) {
             Transaction tx = session.beginTransaction();
-            session.update(dormitory);
+            session.update(room);
             tx.commit();
-            return dormitory;
+            return room;
         }
     }
-    public void delete(Dormitory dormitory){
+    public void delete(Room room){
         try (Session session = sessionFactory.openSession()) {
             Transaction tx = session.beginTransaction();
-            session.remove(dormitory);
+            session.remove(room);
             tx.commit();
         }
     }

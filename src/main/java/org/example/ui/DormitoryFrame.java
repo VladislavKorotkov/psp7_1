@@ -13,7 +13,7 @@ import java.awt.event.ActionListener;
 import java.util.List;
 
 public class DormitoryFrame extends JFrame {
-    private DormitoryDAO dormitoryDAO = new DormitoryDAO();
+    private DormitoryDAO dormitoryDAO;
     private JTextField nameTextField;
     private JTextField addressTextField;
     private JTable table;
@@ -21,12 +21,11 @@ public class DormitoryFrame extends JFrame {
     private JButton createButton;
     private JButton editButton;
     private JButton deleteButton;
-    private int idCounter = 1;
 
     public DormitoryFrame() {
+        this.dormitoryDAO = new DormitoryDAO();
         // Настройка основного окна
-        setTitle("CRUD Window");
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setTitle("Общежития");
         setSize(800, 600);
         setLayout(new BorderLayout());
 
@@ -150,14 +149,5 @@ public class DormitoryFrame extends JFrame {
         for(Dormitory dormitory: dormitoryList){
             tableModel.addRow(new Object[]{dormitory.getId(), dormitory.getName(), dormitory.getAddress()});
         }
-    }
-
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                DormitoryFrame window = new DormitoryFrame();
-                window.setVisible(true);
-                window.setLocationRelativeTo(null);            }
-        });
     }
 }
