@@ -1,12 +1,17 @@
 package org.example.ui;
 
+import org.example.dao.DormitoryDAO;
+import org.example.model.Dormitory;
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
 
 public class DormitoryFrame extends JFrame {
+    private DormitoryDAO dormitoryDAO = new DormitoryDAO();
     private JTextField nameTextField;
     private JTextField addressTextField;
     private JTable table;
@@ -28,6 +33,7 @@ public class DormitoryFrame extends JFrame {
         tableModel.addColumn("ID");
         tableModel.addColumn("Название");
         tableModel.addColumn("Адрес");
+        initializeTable();
 
         // Создание таблицы
         table = new JTable(tableModel);
@@ -72,6 +78,7 @@ public class DormitoryFrame extends JFrame {
                 String address = addressTextField.getText();
 
                 if (!name.isEmpty() && !address.isEmpty()) {
+                    dormitoryDAO.create(new Dormitory(name, address));
                     tableModel.addRow(new Object[]{idCounter, name, address});
                     idCounter++;
                     nameTextField.setText("");
@@ -117,6 +124,13 @@ public class DormitoryFrame extends JFrame {
                 }
             }
         });
+    }
+
+    private void initializeTable() {
+        List<Dormitory> dormitoryList = dormitoryDAO.getAll();
+        for(Dormitory dormitory: dormitoryList){
+            tableModel.addRow(new Object[]{dormitory.getId(), dormitory.getName(), dormitory.getAddress()});
+        }
     }
 
     public static void main(String[] args) {
