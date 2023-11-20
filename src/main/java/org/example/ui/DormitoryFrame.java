@@ -4,6 +4,8 @@ import org.example.dao.DormitoryDAO;
 import org.example.model.Dormitory;
 
 import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -25,7 +27,7 @@ public class DormitoryFrame extends JFrame {
         // Настройка основного окна
         setTitle("CRUD Window");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(400, 300);
+        setSize(800, 600);
         setLayout(new BorderLayout());
 
         // Создание модели таблицы
@@ -78,9 +80,8 @@ public class DormitoryFrame extends JFrame {
                 String address = addressTextField.getText();
 
                 if (!name.isEmpty() && !address.isEmpty()) {
-                    dormitoryDAO.create(new Dormitory(name, address));
-                    tableModel.addRow(new Object[]{idCounter, name, address});
-                    idCounter++;
+                    Dormitory dormitory = dormitoryDAO.create(new Dormitory(name, address));
+                    tableModel.addRow(new Object[]{dormitory.getId(), dormitory.getName(), dormitory.getAddress()});
                     nameTextField.setText("");
                     addressTextField.setText("");
                 } else {
@@ -96,8 +97,9 @@ public class DormitoryFrame extends JFrame {
                 if (selectedRow >= 0) {
                     String name = nameTextField.getText();
                     String address = addressTextField.getText();
-
                     if (!name.isEmpty() && !address.isEmpty()) {
+                        Dormitory dormitory = new Dormitory((Integer) tableModel.getValueAt(selectedRow, 0), name, address);
+                        dormitoryDAO.update(dormitory);
                         tableModel.setValueAt(name, selectedRow, 1);
                         tableModel.setValueAt(address, selectedRow, 2);
                         nameTextField.setText("");
@@ -116,11 +118,28 @@ public class DormitoryFrame extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 int selectedRow = table.getSelectedRow();
                 if (selectedRow >= 0) {
+                    dormitoryDAO.delete(new Dormitory((Integer) tableModel.getValueAt(selectedRow, 0), (String) tableModel.getValueAt(selectedRow, 1), (String) tableModel.getValueAt(selectedRow, 2)));
                     tableModel.removeRow(selectedRow);
                     nameTextField.setText("");
                     addressTextField.setText("");
                 } else {
                     JOptionPane.showMessageDialog(DormitoryFrame.this, "Выберите запись для удаления", "Ошибка", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
+        table.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                int selectedRow = table.getSelectedRow();
+                if (selectedRow >= 0) {
+                    // Получение данных выбранной строки
+                    int id = (int) tableModel.getValueAt(selectedRow, 0);
+                    String name = (String) tableModel.getValueAt(selectedRow, 1);
+                    String address = (String) tableModel.getValueAt(selectedRow, 2);
+
+                    // Установка данных в текстовые поля
+                    nameTextField.setText(name);
+                    addressTextField.setText(address);
                 }
             }
         });
@@ -138,7 +157,7 @@ public class DormitoryFrame extends JFrame {
             public void run() {
                 DormitoryFrame window = new DormitoryFrame();
                 window.setVisible(true);
-            }
+                window.setLocationRelativeTo(null);            }
         });
     }
 }
